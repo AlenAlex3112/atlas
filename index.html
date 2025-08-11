@@ -1,209 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Dashboard - Kerala Bird Atlas</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/birdcount.css">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDjxmd8kV-I0IJl_0Pmlo-bluTt6s4YZxs"></script>
-    <script type="text/javascript" src="js/underscore-min.js"></script>
-    <script type="text/javascript" src="js/sammyjs-0.7.6.js"></script>
-    <script type="text/javascript" src="js/infobox_packed-1.19.js"></script>
-    <script type="text/javascript" src="js/location-marker.js"></script>
-    <script type="text/javascript" src="js/birdcount.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
-    <script>
-        const API_KEY = "AIzaSyDjxmd8kV-I0IJl_0Pmlo-bluTt6s4YZxs";
-        const MAP_DATA = {
-            thrissur: {
-                mapSpreadSheetId: '1IKx7zUs8ZYKHkx6BwN2Lt8zfpSAlpkGC56mjFuk_DUY',
-                //mapSpreadSheetId: '1U-XAkS3o9NpBAMJXn5V-hLEpi8w5Sg1QdOC9gk7j-Ng',
-                name: 'Thrissur',
-                mapContainerId: 'thrissur'
-            },
-            alappuzha: {
-                mapSpreadSheetId: '1mqJ72hWsrSMAkkwG2rhJVo41OWfD1-mJZ3ytntt23Rs',
-                //mapSpreadSheetId: '1QSOQ5E8u1ObPXVf1sWJonIEmgvHWnJbvmHu5khrxs5s',
-                name: 'Alappuzha',
-                mapContainerId: 'alappuzha'
-            },
-            palakkad: {
-                mapSpreadSheetId: '1F9iMxso21ZH2ScSDeHqg8-884AXCTYCeWdc8sVeHUc4',
-                //mapSpreadSheetId: '1QdYbm063-cA49snGsDyW_scH165zjiK6_TDER68QMAk',
-                name: 'Palakkad',
-                mapContainerId: 'palakkad'
-            },
-            thiruvananthapuram: {
-                mapSpreadSheetId: '1fn7LLv7qZItaluKYQbqYE-VseCRTa7o2XrQCll21X4A',
-                //mapSpreadSheetId: '1rfkshBzNekV0orcDE6S4HJvATqzaWHXIaG2slvTVWDE',
-                name: 'Thiruvananthapuram',
-                mapContainerId: 'thiruvananthapuram'
-            },
-            kannur: {
-                mapSpreadSheetId: '1wfkAnFl5d8vg2FOPBUJCbwcpii_Eifm2hF_IUjHxnZ8',
-                //mapSpreadSheetId: '1qHRkbuoVjyuxu_QFvvGMq0G9gKffxSuG_iqrjHECHdQ',
-                name: 'Kannur',
-                mapContainerId: 'kannur'
-            },
-            kozhikode: {
-                mapSpreadSheetId: '1vUjuwCvB11L16PVxqq7KQSzsuqHIPc5FtjoLXqnis18',
-                //mapSpreadSheetId: '1Jdf3BR4yt_Euzhbh4h89zOPhuiBrK2EySiD9cqYSgQU',
-                name: 'Kozhikode',
-                mapContainerId: 'kozhikode'
-            },
-            wayanad: {
-                mapSpreadSheetId: '1rL5mTDtzk-Ta8th5-_tjjL-GEWaWvKPbPQ6GzU8N0Po',
-                //mapSpreadSheetId: '1mThngQVkUxjNF5RwTytFNsLVdGyD5hHrw7XgQW_iABQ',
-                name: 'Wayanad',
-                mapContainerId: 'wayanad'
-            },
-            ernakulam: {
-                mapSpreadSheetId: '1UtKQEVIBvsgusNDTzhFjf4Rk-cXiR5uKhSyzynKuWnk',
-                //mapSpreadSheetId: '1ONGh5uzNc8VUiAP9wVgpLsYji4qgsy-yLZUSctR8t4w',
-                name: 'Ernakulam',
-                mapContainerId: 'ernakulam'
-            },
-            kasaragod: {
-                mapSpreadSheetId: '1Mdlp52-vt6pIlAksJlJl1KLxR9mWJBTnqg8NqXRJh6U',
-                //mapSpreadSheetId: '1JvON1bO7e4iUx3MGS-gSTwKpZJaK57KNoQMPRa4swPg',
-                name: 'Kasaragod',
-                mapContainerId: 'kasaragod'
-            },
-            malappuram: {
-                mapSpreadSheetId: '1qsT2H14LOAOidYQlQ9lvX8VNmX19fDW7Rl7OXHhIVNw',
-                //mapSpreadSheetId: '1zpycP6CjULjKyt1ruOM19DLOLtQ7oy5cCkQ_94uHvn4',
-                name: 'Malappuram',
-                mapContainerId: 'malappuram'
-            },
-            idukki: {
-                mapSpreadSheetId: '1foGxN4nPD3BDUuTp5EXr0krq2JrFq7NiQAeRZtBN8_E',
-                //mapSpreadSheetId: '1ll9S8Arf4oDqe4L0sWwWRr9T1T7KrHiR8gVclBLRXeY',
-                name: 'Idukki',
-                mapContainerId: 'idukki'
-            },
-            kottayam: {
-                mapSpreadSheetId: '1SqjbUhvGICfL83x5s1scz5trVvBeTghfGI_rBaU-GpQ',
-                //mapSpreadSheetId: '1K33Vi89EvvyxBEm3jqYnU_tjPRW47jF3JhBSr6bUIp8',
-                name: 'Kottayam',
-                mapContainerId: 'kottayam'
-            },
-            kollam: {
-                mapSpreadSheetId: '1GbsessbZd7n9c0DsNnkebTrGWlNuP85ZtgpkFgBM980',
-                //mapSpreadSheetId: '15-w6n07I5y-VhtKsIOrkO1XggRxVklng373-3opL9Po',
-                name: 'Kollam',
-                mapContainerId: 'kollam'
-            },
-            pathanamthitta: {
-                mapSpreadSheetId: '1NvPSvndk6EUBMkAlAEyYlOylKU6ILQhipFzIbO6cCks',
-                //mapSpreadSheetId: '1kfRm4KVFgWauEiQ7rdYNMgBWIkw0yeiwOBdcYiINSJ8',
-                name: 'Pathanamthitta',
-                mapContainerId: 'pathanamthitta'
-            }
-        };
-    </script>
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-74080161-1', 'auto');
-        ga('send', 'pageview');
-    </script>
+    <meta charset="UTF-8">
+    <title>Dynamic Bird Count Maps</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body { padding: 20px; }
+        .map-container { height: 600px; }
+        .nav-pills > li > a { font-weight: bold; }
+    </style>
 </head>
-<body id="main">
-<nav class="navbar navbar-default navbar-static-top" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#/">Kerala Bird Atlas</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav nav-pills">
-                <li role="presentation">
-                    <a href="#/kerala/thiruvananthapuram" role="tab" data-target="#thiruvananthapuram" data-toggle="tab">Thiruvananthapuram</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/kollam" role="tab" data-target="#kollam" data-toggle="tab">Kollam</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/pathanamthitta" role="tab" data-target="#pathanamthitta" data-toggle="tab">Pathanamthitta</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/alappuzha" role="tab" data-target="#alappuzha" data-toggle="tab">Alappuzha</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/kottayam" role="tab" data-target="#kottayam" data-toggle="tab">Kottayam</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/idukki" role="tab" data-target="#idukki" data-toggle="tab">Idukki</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/ernakulam" role="tab" data-target="#ernakulam" data-toggle="tab">Ernakulam</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/thrissur" role="tab" data-target="#thrissur" data-toggle="tab">Thrissur</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/palakkad" role="tab" data-target="#palakkad" data-toggle="tab">Palakkad</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/malappuram" role="tab" data-target="#malappuram" data-toggle="tab">Malappuram</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/kozhikode" role="tab" data-target="#kozhikode" data-toggle="tab">Kozhikode</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/wayanad" role="tab" data-target="#wayanad" data-toggle="tab">Wayanad</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/kannur" role="tab" data-target="#kannur" data-toggle="tab">Kannur</a>
-                </li>
-                <li role="presentation">
-                    <a href="#/kerala/kasaragod" role="tab" data-target="#kasaragod" data-toggle="tab">Kasaragod</a>
-                </li>
-            </ul>
-        </div>
+<body>
+<div class="container-fluid">
+    <div id="navbar">
+        <ul class="nav nav-pills" role="tablist">
+            <!-- Dynamic nav tabs will be inserted here -->
+        </ul>
     </div>
-</nav>
-<div class="map-parent container-fluid">
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane map-container" id="thiruvananthapuram"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="kollam"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="pathanamthitta"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="alappuzha"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="kottayam"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="idukki"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="ernakulam"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="thrissur"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="palakkad"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="malappuram"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="kozhikode"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="wayanad"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="kannur"></div>
-        <div role="tabpanel" class="tab-pane map-container" id="kasaragod"></div>
+        <!-- Dynamic map containers will be inserted here -->
     </div>
 </div>
-<div class="modal fade page-alert-box" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Warning</h4>
-            </div>
-            <div class="modal-body"></div>
-        </div>
-    </div>
-</div>
+
+<!-- Dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<script>
+const API_KEY = "AIzaSyDjxmd8kV-I0IJl_0Pmlo-bluTt6s4YZxs";
+const MASTER_SHEET_ID = "1vYFBN66bOciRX_-Ic9DHoJ3exbxWq3VU0lkrNkylb3o";
+const MASTER_RANGE = "A2:C"; // No. of districts, district name, sheet link
+
+function getSheetIdFromUrl(url) {
+    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    return match ? match[1] : null;
+}
+
+function loadMapDataFromMaster(callback) {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${MASTER_SHEET_ID}/values/${MASTER_RANGE}?key=${API_KEY}`;
+    $.getJSON(url, function(data) {
+        const rows = data.values || [];
+        let mapData = {};
+        rows.forEach(row => {
+            const districtName = row[1]?.trim();
+            const sheetUrl = row[2]?.trim();
+            const sheetId = getSheetIdFromUrl(sheetUrl);
+            if (districtName && sheetId) {
+                const id = districtName.toLowerCase().replace(/\s+/g, '');
+                mapData[id] = {
+                    mapSpreadSheetId: sheetId,
+                    name: districtName,
+                    mapContainerId: id
+                };
+            }
+        });
+        callback(mapData);
+    }).fail(err => {
+        console.error("Failed to load master sheet:", err);
+        alert("Error loading master sheet data. Check console for details.");
+    });
+}
+
+function buildNavAndTabs(MAP_DATA) {
+    const navList = $("#navbar .nav-pills");
+    const tabContent = $(".tab-content");
+    navList.empty();
+    tabContent.empty();
+    let first = true;
+
+    Object.values(MAP_DATA).forEach(district => {
+        // Nav tab
+        const navItem = $(`
+            <li role="presentation" ${first ? 'class="active"' : ''}>
+                <a href="#/kerala/${district.mapContainerId}" 
+                   role="tab" 
+                   data-target="#${district.mapContainerId}" 
+                   data-toggle="tab">${district.name}</a>
+            </li>
+        `);
+        navList.append(navItem);
+
+        // Map container
+        const tabPane = $(`
+            <div role="tabpanel" 
+                 class="tab-pane map-container ${first ? 'active' : ''}" 
+                 id="${district.mapContainerId}"></div>
+        `);
+        tabContent.append(tabPane);
+
+        first = false;
+    });
+}
+
+loadMapDataFromMaster(function(MAP_DATA) {
+    console.log("Loaded MAP_DATA:", MAP_DATA);
+    buildNavAndTabs(MAP_DATA);
+    // You can initialize your map rendering function here for each district
+    // Example: initMaps(MAP_DATA);
+});
+</script>
 </body>
 </html>
