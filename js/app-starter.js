@@ -1,35 +1,14 @@
-// --- NEW js/app-starter.js ---
+// --- NEW RECURSIVE js/app-starter.js ---
 
 /**
- * This function is called by navbar.js *after* the MAP_DATA is fetched.
- * @param {object} MAP_DATA - The object containing district info.
+ * This function is called by navbar.js *after* the ROOT data is fetched.
+ * @param {Array} rootData - The array of items from the master sheet.
  */
-function startApplication(MAP_DATA) {
+function startApplication(rootData) {
     
-    // 1. Get the empty HTML containers
-    const $navPills = $('#district-nav-pills');
-    const $mapTabContent = $('#map-tab-content');
-
-    // 2. Build the HTML dynamically
-    Object.keys(MAP_DATA).forEach(key => {
-        const district = MAP_DATA[key];
-        
-        // Create the navbar link
-        const navHtml = `
-            <li role="presentation">
-                <a href="#/kerala/${district.mapContainerId}" role="tab" data-target="#${district.mapContainerId}" data-toggle="tab">${district.name}</a>
-            </li>`;
-        
-        // Create the map container div
-        const mapHtml = `
-            <div role="tabpanel" class="tab-pane map-container" id="${district.mapContainerId}"></div>`;
-
-        // Add them to the page
-        $navPills.append(navHtml);
-        $mapTabContent.append(mapHtml);
-    });
-
-    // 3. Now that the HTML is built, start the router
-    // This calls the function from your modified 'app.js'
-    initializeRouter(MAP_DATA);
+    // This file no longer builds any HTML.
+    // It just passes the initial data to the router,
+    // which will now manage the application state.
+    
+    initializeRouter(rootData);
 }

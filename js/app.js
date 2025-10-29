@@ -1,50 +1,173 @@
-// --- MODIFIED js/app.js ---
+// --- FINAL CORRECTED js/app.js ---
 
 /**
- * This function now wraps all your original routing logic.
- * It is called by app-starter.js.
- * @param {object} MAP_DATA - The object containing district info.
+ * This function is called by app-starter.js.
+ * @param {Array} rootData - The array of items from the master sheet.
  */
-function initializeRouter(MAP_DATA) {
+function initializeRouter(rootData) {
+
+    // --- DEBUGGING LINE 1 ---
+    console.log("1. initializeRouter received this rootData:", rootData);
 
     const app = $.sammy('#main', function () {
-        const maps = {};
+        // --- Caches and Element Selectors ---
+        const maps = {}; // Caches loaded maps
+        const gapiCache = {}; // Caches fetched sheet data to avoid re-fetching
+        const $dropdownMenu = $('#district-nav-pills');
+        const $dropdownButton = $('#district-selector-btn');
 
-        function getOrCreateMap(id) {
-            let map = maps[id];
-            if (!map) {
-                // Pass the MAP_DATA for this specific ID to the createMap function
-                map = BirdCount.createMap(MAP_DATA[id]);
-                maps[id] = map;
+        // --- Helper Function: Get Sheet ID ---
+        function getSheetId(input) {
+            if (!input) return null;
+            const match = input.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                return match[1];
             }
-            return map;
+            if (input.match(/^[a-zA-Z0-9_-]+$/) && input.length > 30) {
+                return input;
+            }
+            return null;
         }
 
-        this.get('#/', function (context) {
-            // Get the *first* dynamically created link
-            const first = $('ul.nav a:first').attr('href');
-            if (first) {
-                this.redirect(first);
-            } else {
-                console.error("No districts found to redirect to.");
+        // --- Helper Function: Fetch Sheet Data ---
+        async function gapiFetch(sheetId) {
+            if (gapiCache[sheetId]) {
+                return gapiCache[sheetId];
             }
-        });
+            
+            try {
+                const response = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: sheetId,
+                    range: 'Sheet1!A2:C', // Assumes: Name, last_sheet, link
+                });
 
-        this.get('#/kerala/:district', function (context) {
-            const district = this.params['district'],
-                map = getOrCreateMap(district);
-            $('ul.nav a[data-target="#' + district + '"]').tab('show');
+                const rows = response.result.values;
+                const items = [];
+                if (rows && rows.length > 0) {
+                    rows.forEach(row => {
+                        const name = row[0];
+                        const last_sheet = row[1];
+                        const link = row[2];
+                        
+                        if (name && last_sheet && link) {
+                            items.push({
+                                name: name.trim(),
+                                last_sheet: last_sheet.trim(),
+                                link: link.trim(),
+                                sheetId: getSheetId(link.trim())
+                            });
+                        }
+                    });
+                }
+                gapiCache[sheetId] = items; 
+                return items;
+
+            } catch (err) {
+                console.error("Error fetching sheet data:", err);
+                const msg = err.result ? err.result.error.message : "Error loading sub-sheet data.";
+                $('.page-alert-box .modal-body').html('<p>' + msg + '</p>');
+                $('.page-alert-box').modal('show');
+                return []; 
+            }
+        }
+        
+        // --- Helper Function: Populate Dropdown ---
+        function populateDropdown(items, pathPrefix) {
+            // --- DEBUGGING LINE 3 ---
+            console.log("3. Populating dropdown with these items:", items);
+            
+            $dropdownMenu.empty();
+            if (!items) return;
+
+            items.forEach(item => {
+                const itemNameKey = item.name.trim().toLowerCase();
+                const newHref = pathPrefix + itemNameKey;
+                $dropdownMenu.append(`<li><a href="${newHref}">${item.name}</a></li>`);
+            });
+        }
+        
+        // --- Helper Function: Load Map ---
+        function loadMap(mapItem, mapContainerId) {
+            const mapOptions = {
+                mapSpreadSheetId: mapItem.sheetId,
+                name: mapItem.name,
+                mapContainerId: mapContainerId
+            };
+            
+            if ($('#' + mapContainerId).length === 0) {
+                const mapHtml = `<div role="tabpanel" class="tab-pane map-container" id="${mapContainerId}"></div>`;
+                $('#map-tab-content').append(mapHtml);
+            }
+            
+            $('#' + mapContainerId).addClass('active');
+
+            const map = maps[mapContainerId] ? maps[mapContainerId] : BirdCount.createMap(mapOptions);
+            maps[mapContainerId] = map;
             map.recenter();
-        });
+        }
+
+        // --- THIS IS THE CORE RECURSIVE LOGIC ---
+        // Both routes will call this one function
+        async function handleRoute() {
+            // 'this' is the sammy.js context
+            // 'splat' will contain "kerala.1/wet" or be undefined if at #/
+            const path = this.params['splat'] || ''; 
+            
+            // --- DEBUGGING LINE 2 ---
+            console.log("2. handleRoute triggered for path:", path);
+            
+            const parts = path.split('/').filter(p => p.length > 0); 
+            
+            let currentItems = rootData; 
+            let currentPathPrefix = '#/';
+            let lastItemName = "Select an Item";
+            
+            $('.map-parent .tab-pane').removeClass('active');
+
+            for (const part of parts) {
+                const decodedPart = decodeURIComponent(part);
+                const selectedItem = currentItems.find(item => item.name.trim().toLowerCase() === decodedPart);
+
+                if (!selectedItem) {
+                    console.error(`Invalid path part: ${decodedPart}`);
+                    this.redirect('#/');
+                    return;
+                }
+
+                lastItemName = selectedItem.name; 
+
+                if (selectedItem.last_sheet === '1') {
+                    const mapContainerId = 'map-' + path.replace(/[^a-z0-9]/g, '-');
+                    loadMap(selectedItem, mapContainerId);
+                    populateDropdown(currentItems, currentPathPrefix); 
+                    $dropdownButton.html(lastItemName + ' <span class="caret"></span>');
+                    return; 
+                }
+                
+                if (selectedItem.last_sheet === '0') {
+                    currentItems = await gapiFetch(selectedItem.sheetId);
+                    currentPathPrefix += part + '/';
+                }
+            }
+
+            populateDropdown(currentItems, currentPathPrefix);
+            $dropdownButton.html(lastItemName + ' <span class.="caret"></span>');
+        }
+
+        // --- THE CORRECTED SAMMY.JS ROUTES ---
+        // This route handles all sub-pages (e.g., /#/kerala.1/wet)
+        this.get('#/:splat', handleRoute);
+        // This route handles the root homepage (/#/)
+        this.get('#/', handleRoute);
+
     });
 
-    // Start the app router
-    app.run('#/');
+    // Start the app router, run the logic for the current URL
+    app.run(location.hash || '#/');
 
-    // Attach click listeners to the new dynamic links
+    // Click handler for collapsing the mobile navbar
     const navbar = $("#navbar");
-    $('ul.nav a').click(function (e) {
-        app.setLocation($(this).attr('href'));
+    $(document).on('click', '#district-nav-pills a', function(e) {
         navbar.collapse('hide');
     });
 }

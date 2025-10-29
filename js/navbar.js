@@ -1,91 +1,77 @@
-// --- NEW js/navbar.js ---
+// --- NEW RECURSIVE js/navbar.js ---
 
 (function() {
-    // --- Configuration ---
-    const INDEX_SPREADSHEET_ID = '1vYFBN66bOciRX_-Ic9DHoJ3exbxWq3VU0lkrNkylb3o';
-    const RANGE = 'Sheet1!A2:C';
-    // ---------------------
+    // 1. Set the new master sheet ID
+    const MASTER_SHEET_ID = '1fUqe-a3brySWDt47s4gdeYjA2aBFuzAjFv9A68QFUZA';
+    const RANGE = 'Sheet1!A2:C'; // Assumes columns: Name, last_sheet, link
 
     /**
      * Extracts the Google Sheet ID from a full URL or returns the input if it's already an ID.
      */
     function getSheetId(input) {
         if (!input) return null;
-        
-        // Check if it's a full URL and extract the ID
         const match = input.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
         if (match && match[1]) {
             return match[1];
         }
-        
-        // Check if the input itself looks like an ID
-        if (input.match(/^[a-zA-Z0-9_-]+$/) && input.length > 30) { 
+        if (input.match(/^[a-zA-Z0-9_-]+$/) && input.length > 30) {
             return input;
         }
-        
-        return null; // Not a valid URL or ID
+        return null;
     }
 
     /**
-     * Main function to fetch data and build the object.
+     * This function now just fetches the *root* list of items.
      */
-    async function fetchAndBuildMapData() {
+    async function fetchAndBuildRootData() {
         try {
-            // 1. Initialize the Google Sheets API client for the browser
             await gapi.client.init({
-                'apiKey': API_KEY,
+                'apiKey': API_KEY, // From api-key.js
                 'discoveryDocs': ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
             });
 
-            // 2. Fetch the data from the spreadsheet
             const response = await gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: INDEX_SPREADSHEET_ID,
+                spreadsheetId: MASTER_SHEET_ID,
                 range: RANGE,
             });
 
             const rows = response.result.values;
-            const MAP_DATA = {}; // This is where we'll store the final object
+            const rootData = []; // This is now just an array
 
-            // 3. Process the rows if data was returned
             if (rows && rows.length > 0) {
                 rows.forEach(row => {
-                    const districtName = row[0]; // Data from Column A
-                    const linkOrId = row[2];     // Data from Column C
+                    const name = row[0];
+                    const last_sheet = row[1];
+                    const link = row[2];
                     
-                    if (districtName && linkOrId) {
-                        const mapSpreadSheetId = getSheetId(linkOrId);
-                        const districtKey = districtName.trim().toLowerCase();
-                        
-                        if (mapSpreadSheetId) {
-                            MAP_DATA[districtKey] = {
-                                mapSpreadSheetId: mapSpreadSheetId,
-                                name: districtName.trim(),
-                                mapContainerId: districtKey
-                            };
-                        } else {
-                            console.warn(`Could not get a valid Sheet ID for ${districtName}`);
-                        }
+                    if (name && last_sheet && link) {
+                        rootData.push({
+                            name: name.trim(),
+                            last_sheet: last_sheet.trim(),
+                            link: link.trim(),
+                            sheetId: getSheetId(link.trim())
+                        });
                     }
                 });
 
-                // 4. Data is ready. Now, start the application.
-                // This calls the function from 'app-starter.js'
-                startApplication(MAP_DATA);
+                // Pass the initial array to the starter
+                startApplication(rootData); 
 
             } else {
-                console.log('No data found in the spreadsheet.');
-                alert('Error: No data found in the index spreadsheet.');
+                console.log('No data found in the master spreadsheet.');
+                alert('Error: No data found in the master spreadsheet.');
             }
 
         } catch (err) {
-            console.error("Error fetching or processing spreadsheet data:", err);
-            const msg = err.result ? err.result.error.message : "Error loading Google Sheets data. Check API key and spreadsheet permissions.";
-            alert(msg);
+            console.error("Error fetching or processing master spreadsheet data:", err);
+            const msg = err.result ? err.result.error.message : "Error loading master sheet. Check API key and spreadsheet permissions.";
+            
+            $('.page-alert-box .modal-body').html('<p>' + msg + '</p>');
+            $('.page-alert-box').modal('show');
         }
     }
 
-    // This is the entry point. It loads the Google API client, 
-    // and when it's ready, it calls our fetch function.
-    gapi.load('client', fetchAndBuildMapData);
+    // Call the new function
+    gapi.load('client', fetchAndBuildRootData);
 
 })();
