@@ -6,9 +6,6 @@
  */
 function initializeRouter(rootData) {
 
-    // --- DEBUGGING LINE 1 ---
-    console.log("1. initializeRouter received this rootData:", rootData);
-
     const app = $.sammy('#main', function () {
         // --- Caches and Element Selectors ---
         const maps = {}; // Caches loaded maps
@@ -73,9 +70,6 @@ function initializeRouter(rootData) {
         
         // --- Helper Function: Populate Dropdown ---
         function populateDropdown(items, pathPrefix) {
-            // --- DEBUGGING LINE 3 ---
-            console.log("3. Populating dropdown with these items:", items);
-            
             $dropdownMenu.empty();
             if (!items) return;
 
@@ -107,16 +101,19 @@ function initializeRouter(rootData) {
         }
 
         // --- THIS IS THE CORE RECURSIVE LOGIC ---
-        // Both routes will call this one function
         async function handleRoute() {
             // 'this' is the sammy.js context
-            // 'splat' will contain "kerala.1/wet" or be undefined if at #/
-            const path = this.params['splat'] || ''; 
             
-            // --- DEBUGGING LINE 2 ---
-            console.log("2. handleRoute triggered for path:", path);
+            // *** NEW LOGIC TO GET PATH ***
+            // We build the 'parts' array from the named parameters
+            const parts = [];
+            let path = ""; // This will be used for the map ID
             
-            const parts = path.split('/').filter(p => p.length > 0); 
+            if (this.params.p1) { parts.push(this.params.p1); path = this.params.p1; }
+            if (this.params.p2) { parts.push(this.params.p2); path += '/' + this.params.p2; }
+            if (this.params.p3) { parts.push(this.params.p3); path += '/' + this.params.p3; }
+            if (this.params.p4) { parts.push(this.params.p4); path += '/' + this.params.p4; }
+            // Add more (p5, p6) if you ever need deeper nesting
             
             let currentItems = rootData; 
             let currentPathPrefix = '#/';
@@ -151,14 +148,18 @@ function initializeRouter(rootData) {
             }
 
             populateDropdown(currentItems, currentPathPrefix);
-            $dropdownButton.html(lastItemName + ' <span class.="caret"></span>');
+            $dropdownButton.html(lastItemName + ' <span class="caret"></span>');
         }
 
-        // --- THE CORRECTED SAMMY.JS ROUTES ---
-        // This route handles all sub-pages (e.g., /#/kerala.1/wet)
-        this.get('#/:splat', handleRoute);
-        // This route handles the root homepage (/#/)
+        // --- THE FINAL CORRECTED SAMMY.JS ROUTES ---
+        // These routes are explicit and will not fail. (Assuming a max depth of 6)
         this.get('#/', handleRoute);
+        this.get('#/:p1', handleRoute);
+        this.get('#/:p1/:p2', handleRoute);
+        this.get('#/:p1/:p2/:p3', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4/:p5', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4/:p5/:p6', handleRoute);
 
     });
 
