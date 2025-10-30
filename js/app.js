@@ -1,4 +1,4 @@
-// --- FINAL CORRECTED js/app.js ---
+// --- FINAL app.js (with Back Button & Corrected Route Order) ---
 
 /**
  * This function is called by app-starter.js.
@@ -9,9 +9,10 @@ function initializeRouter(rootData) {
     const app = $.sammy('#main', function () {
         // --- Caches and Element Selectors ---
         const maps = {}; // Caches loaded maps
-        const gapiCache = {}; // Caches fetched sheet data to avoid re-fetching
+        const gapiCache = {}; // Caches fetched sheet data
         const $dropdownMenu = $('#district-nav-pills');
         const $dropdownButton = $('#district-selector-btn');
+        const $backButton = $('#back-button-li'); // Get the back button
 
         // --- Helper Function: Get Sheet ID ---
         function getSheetId(input) {
@@ -102,18 +103,23 @@ function initializeRouter(rootData) {
 
         // --- THIS IS THE CORE RECURSIVE LOGIC ---
         async function handleRoute() {
-            // 'this' is the sammy.js context
-            
-            // *** NEW LOGIC TO GET PATH ***
-            // We build the 'parts' array from the named parameters
             const parts = [];
-            let path = ""; // This will be used for the map ID
+            let path = ""; 
             
             if (this.params.p1) { parts.push(this.params.p1); path = this.params.p1; }
             if (this.params.p2) { parts.push(this.params.p2); path += '/' + this.params.p2; }
             if (this.params.p3) { parts.push(this.params.p3); path += '/' + this.params.p3; }
             if (this.params.p4) { parts.push(this.params.p4); path += '/' + this.params.p4; }
-            // Add more (p5, p6) if you ever need deeper nesting
+            if (this.params.p5) { parts.push(this.params.p5); path += '/' + this.params.p5; }
+            if (this.params.p6) { parts.push(this.params.p6); path += '/' + this.params.p6; }
+            if (this.params.p7) { parts.push(this.params.p7); path += '/' + this.params.p7; }
+            
+            // Show or hide the back button
+            if (path.length > 0) {
+                $backButton.show();
+            } else {
+                $backButton.hide();
+            }
             
             let currentItems = rootData; 
             let currentPathPrefix = '#/';
@@ -151,20 +157,38 @@ function initializeRouter(rootData) {
             $dropdownButton.html(lastItemName + ' <span class="caret"></span>');
         }
 
-        // --- THE FINAL CORRECTED SAMMY.JS ROUTES ---
-        // These routes are explicit and will not fail. (Assuming a max depth of 6)
-        this.get('#/', handleRoute);
-        this.get('#/:p1', handleRoute);
-        this.get('#/:p1/:p2', handleRoute);
-        this.get('#/:p1/:p2/:p3', handleRoute);
-        this.get('#/:p1/:p2/:p3/:p4', handleRoute);
-        this.get('#/:p1/:p2/:p3/:p4/:p5', handleRoute);
+        // --- THE SAMMY.JS ROUTES (Correct Order) ---
+        // Most specific routes must be defined FIRST
+        this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4/:p5', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4', handleRoute);
+        this.get('#/:p1/:p2/:p3', handleRoute);
+        this.get('#/:p1/:p2', handleRoute);
+        this.get('#/:p1', handleRoute);
+        this.get('#/', handleRoute); // Least specific (root) route LAST
 
     });
 
-    // Start the app router, run the logic for the current URL
+    // Start the app router
     app.run(location.hash || '#/');
+
+    // --- Click handler for the back button ---
+    $(document).on('click', '#back-button', function(e) {
+        e.preventDefault(); 
+        
+        const currentHash = location.hash; 
+        const parts = currentHash.split('/').filter(p => p.length > 0 && p !== '#');
+        
+        parts.pop(); 
+        
+        let newHash = '#/';
+        if (parts.length > 0) {
+            newHash += parts.join('/'); 
+        }
+        
+        location.hash = newHash; 
+    });
 
     // Click handler for collapsing the mobile navbar
     const navbar = $("#navbar");

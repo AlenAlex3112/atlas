@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Dashboard - Kerala Bird Atlas</title>
+    <title>Bird Atlas Dashboard</title>
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/birdcount.css">
@@ -15,12 +15,9 @@
     <script type="text/javascript" src="js/underscore-min.js" defer></script>
     <script type="text/javascript" src="js/sammyjs-0.7.6.js" defer></script>
     <script type="text/javascript" src="js/infobox_packed-1.19.js" defer></script>
-    <script type="text/javascript" src="js/location-marker.js" defer></script>
-
     <script src="https://apis.google.com/js/api.js" defer></script>
-
+    <script type="text/javascript" src="js/location-marker.js" defer></script>
     <script type="text/javascript" src="js/api-key.js" defer></script>
-
     <script type="text/javascript" src="js/birdcount.js" defer></script>
     <script type="text/javascript" src="js/app.js" defer></script>
     <script type="text/javascript" src="js/app-starter.js" defer></script>
@@ -28,6 +25,7 @@
 </head>
 
 <body id="main">
+
 <nav class="navbar navbar-default navbar-static-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -40,27 +38,29 @@
             <a class="navbar-brand" href="#/">Bird Atlas Dashboard</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            
             <ul class="nav navbar-nav">
+
+                <li id="back-button-li" style="display: none;"> <a href="#" id="back-button">
+                        <span class="glyphicon glyphicon-chevron-left"></span> Back
+                    </a>
+                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="district-selector-btn">
-                        Select a District <span class="caret"></span>
+                        Select an Item <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" id="district-nav-pills">
                         </ul>
                 </li>
             </ul>
-
-            <ul class="nav nav-pills navbar-nav" id="season-nav-pills">
-                </ul>
-
         </div>
     </div>
 </nav>
+
 <div class="map-parent container-fluid">
     <div class="tab-content" id="map-tab-content">
-    </div>
+        </div>
 </div>
+
 <div class="modal fade page-alert-box" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -74,5 +74,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>
