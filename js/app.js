@@ -1,4 +1,4 @@
-// --- UPDATED app.js (Pills instead of Dropdown) ---
+// --- UPDATED app.js (Back Button overrides Default) ---
 
 /**
  * This function is called by app-starter.js.
@@ -6,12 +6,14 @@
  */
 function initializeRouter(rootData) {
 
+    // *** NEW: A flag to communicate between the back button and the router ***
+    let isNavigatingBack = false;
+
     const app = $.sammy('#main', function () {
         // --- Caches and Element Selectors ---
         const maps = {}; // Caches loaded maps
         const gapiCache = {}; // Caches fetched sheet data
-        // *** UPDATED: Removed dropdown, added navPills ***
-        const $navPills = $('#nav-pills-container'); 
+        const $navPills = $('#nav-pills-container'); // Use the Pill container ID
         const $backButton = $('#back-button-li');
 
         // --- Helper Function: Get Sheet ID ---
@@ -34,9 +36,10 @@ function initializeRouter(rootData) {
             }
             
             try {
+                // Fetch all 5 columns
                 const response = await gapi.client.sheets.spreadsheets.values.get({
                     spreadsheetId: sheetId,
-                    range: 'Sheet1!A2:D', // Assumes: Name, last_sheet, link, default
+                    range: 'Sheet1!A2:E', // Name, last_sheet, link, default, boundary
                 });
 
                 const rows = response.result.values;
@@ -46,7 +49,8 @@ function initializeRouter(rootData) {
                         const name = row[0];
                         const last_sheet = row[1];
                         const link = row[2];
-                        const is_default = row[3]; 
+                        const is_default = row[3];
+                        const boundaryLink = row[4]; 
                         
                         if (name && last_sheet && link) {
                             items.push({
@@ -54,7 +58,8 @@ function initializeRouter(rootData) {
                                 last_sheet: last_sheet.trim(),
                                 link: link.trim(),
                                 sheetId: getSheetId(link.trim()),
-                                default: is_default ? is_default.trim() : '0' 
+                                default: is_default ? is_default.trim() : '0',
+                                boundaryLink: boundaryLink ? boundaryLink.trim() : null
                             });
                         }
                     });
@@ -71,8 +76,7 @@ function initializeRouter(rootData) {
             }
         }
         
-        // --- *** NEW: Helper Function: Populate Pills *** ---
-        // This replaces populateDropdown
+        // --- Helper Function: Populate Pills ---
         function populatePills(items, pathPrefix, activePart) {
             $navPills.empty();
             if (!items) return;
@@ -81,10 +85,8 @@ function initializeRouter(rootData) {
                 const itemNameKey = item.name.trim().toLowerCase();
                 const newHref = pathPrefix + itemNameKey;
                 
-                // Check if this item is the active one
                 const activeClass = (itemNameKey === activePart) ? 'active' : '';
                 
-                // Create the pill
                 $navPills.append(
                     `<li role="presentation" class="${activeClass}">
                         <a href="${newHref}">${item.name}</a>
@@ -98,7 +100,8 @@ function initializeRouter(rootData) {
             const mapOptions = {
                 mapSpreadSheetId: mapItem.sheetId,
                 name: mapItem.name,
-                mapContainerId: mapContainerId
+                mapContainerId: mapContainerId,
+                boundaryLink: mapItem.boundaryLink // Pass boundary link to map
             };
             
             if ($('#' + mapContainerId).length === 0) {
@@ -115,6 +118,12 @@ function initializeRouter(rootData) {
 
         // --- THIS IS THE CORE RECURSIVE LOGIC ---
         async function handleRoute() {
+            
+            // *** NEW: Check if this route was triggered by the back button ***
+            const isHandlingBackNavigation = isNavigatingBack;
+            // Immediately reset the global flag for future navigations
+            isNavigatingBack = false;
+
             const parts = [];
             let path = ""; 
             
@@ -154,9 +163,7 @@ function initializeRouter(rootData) {
 
                 if (selectedItem.last_sheet === '1') {
                     const mapContainerId = 'map-' + path.replace(/[^a-z0-9]/g, '-');
-                    loadMap(selectedItem, mapContainerId);
-                    
-                    // *** UPDATED: Populate pills and set the active one ***
+                    loadMap(selectedItem, mapContainerId); // Pass full item
                     populatePills(currentItems, currentPathPrefix, part); 
                     return; 
                 }
@@ -170,7 +177,9 @@ function initializeRouter(rootData) {
             if (currentItems && currentItems.length > 0) {
                 const defaultItem = currentItems.find(item => item.default === '1');
                 
-                if (defaultItem) {
+                // *** NEW: Check the flag before redirecting ***
+                // Only redirect if a default exists AND we didn't get here via the back button
+                if (defaultItem && !isHandlingBackNavigation) {
                     const defaultItemKey = defaultItem.name.trim().toLowerCase();
                     const newHash = currentPathPrefix + defaultItemKey;
                     this.redirect(newHash);
@@ -178,11 +187,10 @@ function initializeRouter(rootData) {
                 }
             }
             
-            // *** UPDATED: Populate pills, no active item ***
             populatePills(currentItems, currentPathPrefix, null);
         }
 
-        // --- THE SAMMY.JS ROUTES (Correct Order) ---
+        // --- THE SAMMY.JS ROUTES (Correct Order, 12-levels) ---
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10/:p11/:p12', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10/:p11', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10', handleRoute);
@@ -206,6 +214,9 @@ function initializeRouter(rootData) {
     $(document).on('click', '#back-button', function(e) {
         e.preventDefault(); 
         
+        // *** NEW: Set the flag before changing the hash ***
+        isNavigatingBack = true;
+        
         const currentHash = location.hash; 
         const parts = currentHash.split('/').filter(p => p.length > 0 && p !== '#');
         
@@ -219,13 +230,9 @@ function initializeRouter(rootData) {
         location.hash = newHash; 
     });
 
-    // *** UPDATED: Click handler now targets pills and dropdown items (for mobile) ***
+    // Click handler for collapsing the mobile navbar
     const navbar = $("#navbar");
-    $(document).on('click', '#nav-pills-container a, #district-nav-pills a', function(e) {
-        // We don't need to do e.preventDefault() because the hash change
-        // is what triggers the router.
-        
-        // Collapse the mobile navbar after a click
+    $(document).on('click', '#nav-pills-container a', function(e) {
         navbar.collapse('hide');
     });
 }

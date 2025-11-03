@@ -3,7 +3,7 @@
 (function() {
     // 1. Set the master sheet ID and expand range to column D
     const MASTER_SHEET_ID = '1fUqe-a3brySWDt47s4gdeYjA2aBFuzAjFv9A68QFUZA';
-    const RANGE = 'Sheet1!A2:D'; // Assumes: Name, last_sheet, link, default
+    const RANGE = 'Sheet1!A2:E'; // Assumes: Name, last_sheet, link, default
 
     /**
      * Extracts the Google Sheet ID from a full URL or returns the input if it's already an ID.
@@ -43,7 +43,8 @@
                     const name = row[0];
                     const last_sheet = row[1];
                     const link = row[2];
-                    const is_default = row[3]; // *** NEW: Get the 4th column ***
+                    const is_default = row[3];
+                    const boundaryLink = row[4]; // *** NEW ***
                     
                     if (name && last_sheet && link) {
                         rootData.push({
@@ -51,7 +52,8 @@
                             last_sheet: last_sheet.trim(),
                             link: link.trim(),
                             sheetId: getSheetId(link.trim()),
-                            default: is_default ? is_default.trim() : '0' // *** NEW: Add default value ***
+                            default: is_default ? is_default.trim() : '0',
+                            boundaryLink: boundaryLink ? boundaryLink.trim() : null // *** NEW ***
                         });
                     }
                 });
