@@ -18,18 +18,27 @@ const BirdCount = (function () {
             '<%if (!_.isEmpty(listUrl["2"])){%><br/><a target="_blank" href="<%=listUrl["2"]%>">List2</a><%}%>' +
             '<%if (!_.isEmpty(listUrl["3"])){%><br/><a target="_blank" href="<%=listUrl["3"]%>">List3</a><%}%>' +
             '<%if (!_.isEmpty(listUrl["4"])){%><br/><a target="_blank" href="<%=listUrl["4"]%>">List4</a><%}%>'),
-        customMapControlTemplate = _.template('<div class="settings-dropdown dropdown"> \
-              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> \
-                <span class="glyphicon glyphicon-menu-hamburger"></span></button> \
-              <ul class="dropdown-menu dropdown-menu-right"> \
-                <li><button type="button" class="btn btn-sm exportKmlBtn" title="Export"><span class="glyphicon glyphicon-download-alt"></span></button> \
-                    <%if (locationAvailable){%><button type="button" class="btn btn-sm gotoCurrentLocation" title="Go to Current Location"><span class="glyphicon glyphicon-record"></span></button><%}%> \
-                    <button type="button" class="btn btn-sm districtCenter" title="Re-Centre"><span class="glyphicon glyphicon-flag"></span></button> \
-                </li> \
-                <%if (locationAvailable){%><li><label><input type="checkbox" class="locationChkBox"/> Show Location</label></li><%}%> \
-                <li><label><input type="checkbox" class="clusterChkBox"/> Show Clusters</label></li> \
-              </ul> \
-            </div>'),
+        
+        customMapControlTemplate = _.template('<div class="settings-dropdown dropdown">\
+ <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">\
+<span class="glyphicon glyphicon-menu-hamburger"></span></button>\
+<ul class="dropdown-menu dropdown-menu-right">\
+<li><button type="button" class="btn btn-sm exportKmlBtn" title="Export"><span class="glyphicon glyphicon-download-alt"></span></button> \
+<%if (locationAvailable){%><button type="button" class="btn btn-sm gotoCurrentLocation" title="Go to Current Location"><span class="glyphicon glyphicon-record"></span></button><%}%> \
+<button type="button" class="btn btn-sm districtCenter" title="Re-Centre"><span class="glyphicon glyphicon-flag"></span></button> \
+<%if (locationAvailable){%><li><label><input type="checkbox" class="locationChkBox"/> Show Location</label></li><%}%> \
+<li><label><input type="checkbox" class="clusterChkBox"/> Show Clusters</label></li>\
+\
+<li>Legend:</li>\
+<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #B0B0B0; margin-right: 10px;"></span>No Lists</li>\
+<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #ADD8E6; margin-right: 10px;"></span>1 List</li>\
+<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #87CEEB; margin-right: 10px;"></span>2 Lists</li>\
+<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #4682B4; margin-right: 10px;"></span>3 Lists</li>\
+<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #00008B; margin-right: 10px;"></span>4 Lists</li>\
+<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #008000; margin-right: 10px;"></span>Reviewed</li>\
+\
+</ul>\
+</div>'),
 
         NS_KML = 'http://www.opengis.net/kml/2.2',
         NS_GX = 'http://www.google.com/kml/ext/2.2',
@@ -94,20 +103,20 @@ const BirdCount = (function () {
 
         getFillColor: function () {
             if (this.isReviewed()) {
-                return '#ba33ff';
+                return '#008000'; // Green
             }
 
             switch (this.getValue('status')) {
                 case '1':
-                    return '#B0B0B0';
+                   return '#ADD8E6'; // Lightest Blue
                 case '2':
-                    return '#808080';
+                    return '#87CEEB'; // Sky Blue
                 case '3':
-                    return '#505050';
+                    return '#4682B4'; // Steel Blue
                 case '4':
-                    return '#202020';
+                    return '#00008B'; // Dark Blue
                 default:
-                    return '#FF8040';
+                    return '#B0B0B0'; // Grey (for 'No Lists')
             }
         },
 

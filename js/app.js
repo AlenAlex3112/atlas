@@ -1,4 +1,4 @@
-// --- FINAL app.js (with Back Button & Corrected Route Order) ---
+// --- UPDATED app.js (Pills instead of Dropdown) ---
 
 /**
  * This function is called by app-starter.js.
@@ -10,9 +10,9 @@ function initializeRouter(rootData) {
         // --- Caches and Element Selectors ---
         const maps = {}; // Caches loaded maps
         const gapiCache = {}; // Caches fetched sheet data
-        const $dropdownMenu = $('#district-nav-pills');
-        const $dropdownButton = $('#district-selector-btn');
-        const $backButton = $('#back-button-li'); // Get the back button
+        // *** UPDATED: Removed dropdown, added navPills ***
+        const $navPills = $('#nav-pills-container'); 
+        const $backButton = $('#back-button-li');
 
         // --- Helper Function: Get Sheet ID ---
         function getSheetId(input) {
@@ -36,7 +36,7 @@ function initializeRouter(rootData) {
             try {
                 const response = await gapi.client.sheets.spreadsheets.values.get({
                     spreadsheetId: sheetId,
-                    range: 'Sheet1!A2:C', // Assumes: Name, last_sheet, link
+                    range: 'Sheet1!A2:D', // Assumes: Name, last_sheet, link, default
                 });
 
                 const rows = response.result.values;
@@ -46,13 +46,15 @@ function initializeRouter(rootData) {
                         const name = row[0];
                         const last_sheet = row[1];
                         const link = row[2];
+                        const is_default = row[3]; 
                         
                         if (name && last_sheet && link) {
                             items.push({
                                 name: name.trim(),
                                 last_sheet: last_sheet.trim(),
                                 link: link.trim(),
-                                sheetId: getSheetId(link.trim())
+                                sheetId: getSheetId(link.trim()),
+                                default: is_default ? is_default.trim() : '0' 
                             });
                         }
                     });
@@ -69,15 +71,25 @@ function initializeRouter(rootData) {
             }
         }
         
-        // --- Helper Function: Populate Dropdown ---
-        function populateDropdown(items, pathPrefix) {
-            $dropdownMenu.empty();
+        // --- *** NEW: Helper Function: Populate Pills *** ---
+        // This replaces populateDropdown
+        function populatePills(items, pathPrefix, activePart) {
+            $navPills.empty();
             if (!items) return;
 
             items.forEach(item => {
                 const itemNameKey = item.name.trim().toLowerCase();
                 const newHref = pathPrefix + itemNameKey;
-                $dropdownMenu.append(`<li><a href="${newHref}">${item.name}</a></li>`);
+                
+                // Check if this item is the active one
+                const activeClass = (itemNameKey === activePart) ? 'active' : '';
+                
+                // Create the pill
+                $navPills.append(
+                    `<li role="presentation" class="${activeClass}">
+                        <a href="${newHref}">${item.name}</a>
+                    </li>`
+                );
             });
         }
         
@@ -113,8 +125,12 @@ function initializeRouter(rootData) {
             if (this.params.p5) { parts.push(this.params.p5); path += '/' + this.params.p5; }
             if (this.params.p6) { parts.push(this.params.p6); path += '/' + this.params.p6; }
             if (this.params.p7) { parts.push(this.params.p7); path += '/' + this.params.p7; }
+            if (this.params.p8) { parts.push(this.params.p8); path += '/' + this.params.p8; }
+            if (this.params.p9) { parts.push(this.params.p9); path += '/' + this.params.p9; }
+            if (this.params.p10) { parts.push(this.params.p10); path += '/' + this.params.p10; }
+            if (this.params.p11) { parts.push(this.params.p11); path += '/' + this.params.p11; }
+            if (this.params.p12) { parts.push(this.params.p12); path += '/' + this.params.p12; }
             
-            // Show or hide the back button
             if (path.length > 0) {
                 $backButton.show();
             } else {
@@ -123,7 +139,6 @@ function initializeRouter(rootData) {
             
             let currentItems = rootData; 
             let currentPathPrefix = '#/';
-            let lastItemName = "Select an Item";
             
             $('.map-parent .tab-pane').removeClass('active');
 
@@ -137,13 +152,12 @@ function initializeRouter(rootData) {
                     return;
                 }
 
-                lastItemName = selectedItem.name; 
-
                 if (selectedItem.last_sheet === '1') {
                     const mapContainerId = 'map-' + path.replace(/[^a-z0-9]/g, '-');
                     loadMap(selectedItem, mapContainerId);
-                    populateDropdown(currentItems, currentPathPrefix); 
-                    $dropdownButton.html(lastItemName + ' <span class="caret"></span>');
+                    
+                    // *** UPDATED: Populate pills and set the active one ***
+                    populatePills(currentItems, currentPathPrefix, part); 
                     return; 
                 }
                 
@@ -153,12 +167,27 @@ function initializeRouter(rootData) {
                 }
             }
 
-            populateDropdown(currentItems, currentPathPrefix);
-            $dropdownButton.html(lastItemName + ' <span class="caret"></span>');
+            if (currentItems && currentItems.length > 0) {
+                const defaultItem = currentItems.find(item => item.default === '1');
+                
+                if (defaultItem) {
+                    const defaultItemKey = defaultItem.name.trim().toLowerCase();
+                    const newHash = currentPathPrefix + defaultItemKey;
+                    this.redirect(newHash);
+                    return; 
+                }
+            }
+            
+            // *** UPDATED: Populate pills, no active item ***
+            populatePills(currentItems, currentPathPrefix, null);
         }
 
         // --- THE SAMMY.JS ROUTES (Correct Order) ---
-        // Most specific routes must be defined FIRST
+        this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10/:p11/:p12', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10/:p11', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9', handleRoute);
+        this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5', handleRoute);
@@ -190,9 +219,13 @@ function initializeRouter(rootData) {
         location.hash = newHash; 
     });
 
-    // Click handler for collapsing the mobile navbar
+    // *** UPDATED: Click handler now targets pills and dropdown items (for mobile) ***
     const navbar = $("#navbar");
-    $(document).on('click', '#district-nav-pills a', function(e) {
+    $(document).on('click', '#nav-pills-container a, #district-nav-pills a', function(e) {
+        // We don't need to do e.preventDefault() because the hash change
+        // is what triggers the router.
+        
+        // Collapse the mobile navbar after a click
         navbar.collapse('hide');
     });
 }
