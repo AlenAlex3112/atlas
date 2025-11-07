@@ -1,7 +1,5 @@
-/**
- * Author vj
- * Licensed under MIT license.
- */
+// --- UPDATED birdcount.js (Using KmlLayer) ---
+
 const BirdCount = (function () {
     const $ = jQuery, //wp noConflicts $. Capture $ in this scope
         CELL_PATTERN = /([A-Z]+)(\d+)/,
@@ -19,26 +17,27 @@ const BirdCount = (function () {
             '<%if (!_.isEmpty(listUrl["3"])){%><br/><a target="_blank" href="<%=listUrl["3"]%>">List3</a><%}%>' +
             '<%if (!_.isEmpty(listUrl["4"])){%><br/><a target="_blank" href="<%=listUrl["4"]%>">List4</a><%}%>'),
         
-        customMapControlTemplate = _.template('<div class="settings-dropdown dropdown">\
- <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">\
-<span class="glyphicon glyphicon-menu-hamburger"></span></button>\
-<ul class="dropdown-menu dropdown-menu-right">\
-<li><button type="button" class="btn btn-sm exportKmlBtn" title="Export"><span class="glyphicon glyphicon-download-alt"></span></button> \
-<%if (locationAvailable){%><button type="button" class="btn btn-sm gotoCurrentLocation" title="Go to Current Location"><span class="glyphicon glyphicon-record"></span></button><%}%> \
-<button type="button" class="btn btn-sm districtCenter" title="Re-Centre"><span class="glyphicon glyphicon-flag"></span></button> \
-<%if (locationAvailable){%><li><label><input type="checkbox" class="locationChkBox"/> Show Location</label></li><%}%> \
-<li><label><input type="checkbox" class="clusterChkBox"/> Show Clusters</label></li>\
-\
-<li>Legend:</li>\
-<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #B0B0B0; margin-right: 10px;"></span>No Lists</li>\
-<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #ADD8E6; margin-right: 10px;"></span>1 List</li>\
-<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #87CEEB; margin-right: 10px;"></span>2 Lists</li>\
-<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #4682B4; margin-right: 10px;"></span>3 Lists</li>\
-<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #00008B; margin-right: 10px;"></span>4 Lists</li>\
-<li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #008000; margin-right: 10px;"></span>Reviewed</li>\
-\
-</ul>\
-</div>'),
+        customMapControlTemplate = _.template('<div class="settings-dropdown dropdown"> \
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> \
+                <span class="glyphicon glyphicon-menu-hamburger"></span></button> \
+            <ul class="dropdown-menu dropdown-menu-right"> \
+                <li><button type="button" class="btn btn-sm exportKmlBtn" title="Export"><span class="glyphicon glyphicon-download-alt"></span></button> \
+                    <%if (locationAvailable){%><button type="button" class="btn btn-sm gotoCurrentLocation" title="Go to Current Location"><span class="glyphicon glyphicon-record"></span></button><%}%> \
+                    <button type="button" class="btn btn-sm districtCenter" title="Re-Centre"><span class="glyphicon glyphicon-flag"></span></button> \
+                </li> \
+                <%if (locationAvailable){%><li><label><input type="checkbox" class="locationChkBox"/> Show Location</label></li><%}%> \
+                <li><label><input type="checkbox" class="clusterChkBox"/> Show Clusters</label></li> \
+                \
+                <li>Legend:</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #B0B0B0; margin-right: 10px;"></span>No Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #ADD8E6; margin-right: 10px;"></span>1 List</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #87CEEB; margin-right: 10px;"></span>2 Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #4682B4; margin-right: 10px;"></span>3 Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #00008B; margin-right: 10px;"></span>4 Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #008000; margin-right: 10px;"></span>Reviewed</li> \
+                \
+            </ul> \
+        </div>'),
 
         NS_KML = 'http://www.opengis.net/kml/2.2',
         NS_GX = 'http://www.google.com/kml/ext/2.2',
@@ -63,7 +62,7 @@ const BirdCount = (function () {
                 mapContainerId: 'map-canvas',
                 mapSpreadSheetId: null,
                 name: 'visualization',
-                boundaryLink: null
+                boundaryLink: null 
             }, options);
 
             if (!this.options.mapSpreadSheetId) {
@@ -99,9 +98,8 @@ const BirdCount = (function () {
                 default:
                     return 1;
             }
-
         },
-
+        
         getFillColor: function () {
             if (this.isReviewed()) {
                 return '#008000'; // Green
@@ -109,11 +107,13 @@ const BirdCount = (function () {
 
             switch (this.getValue('status')) {
                 case '1':
-                   return '#ADD8E6'; // Lightest Blue
+                    return '#ADD8E6'; // Lightest Blue
                 case '2':
                     return '#87CEEB'; // Sky Blue
                 case '3':
-                    return '#4682B4'; // Steel Blue
+Signature: `BirdCount.BirdMap.prototype.getFillColor = function () { ... }`
+Source: `birdcount.js:106`
+return '#4682B4'; // Steel Blue
                 case '4':
                     return '#00008B'; // Dark Blue
                 default:
@@ -186,22 +186,30 @@ const BirdCount = (function () {
 
         processCoordinates: function (rows) {
             this.map = this._createMap(rows);
+            
+            // --- *** UPDATED: Load boundary using KmlLayer *** ---
             if (this.options.boundaryLink) {
-                // Use a proxy to get around CORS issues
-                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(this.options.boundaryLink);
-
-                this.map.data.loadGeoJson(proxyUrl, null, function(features) {
-                    console.log("Boundary loaded successfully.");
-                });
                 
-                // Set the style for your boundary
-                this.map.data.setStyle({
-                    strokeColor: 'red',
-                    strokeWeight: 3,
-                    strokeOpacity: 0.8,
-                    fillOpacity: 0 // Makes it a line, not a filled shape
+                // We no longer need the proxy. KmlLayer can handle the URL.
+                const kmlUrl = this.options.boundaryLink; 
+
+                const kmlLayer = new google.maps.KmlLayer({
+                    url: kmlUrl,
+                    map: this.map,
+                    preserveViewport: true, // Don't let the KML zoom the map
+                    suppressInfoWindows: true // Don't show KML popups
+                });
+
+                kmlLayer.addListener('status_changed', () => {
+                    if (kmlLayer.getStatus() !== google.maps.KmlLayerStatus.OK) {
+                        console.error("Error loading KML file:", kmlLayer.getStatus());
+                    } else {
+                        console.log("Boundary KML layer added successfully.");
+                    }
                 });
             }
+            // --- *** END OF NEW CODE *** ---
+
             this.rectangleInfos = this._createRectangleInfo(rows);
             google.maps.event.addListenerOnce(this.map, 'idle', _.bind(function () {
                 $('#' + this.options.mapContainerId).removeClass("spinner");
@@ -342,7 +350,6 @@ const BirdCount = (function () {
                         enableEventPropagation: true
                     });
 
-                //keep reference handy so that the visibility can be set based on zoom level.
                 this.labels.push(label);
                 google.maps.event.addListener(rectangle, 'click', _.bind(this._showInfoWindow, this, rectangleInfo));
             }, this);
@@ -483,12 +490,14 @@ const BirdCount = (function () {
                 documentNode = xmlDoc.getElementsByTagName("Document")[0];
 
             this._addTextNode(documentNode, 'name', this.options.name, NS_KML);
-            this._addKmlStyles(documentNode, 'reviewed', '99ff33ba');
-            this._addKmlStyles(documentNode, 'status-1', '99b0b0b0');
-            this._addKmlStyles(documentNode, 'status-2', '99808080');
-            this._addKmlStyles(documentNode, 'status-3', '99505050');
-            this._addKmlStyles(documentNode, 'status-4', '99202020');
-            this._addKmlStyles(documentNode, 'status-0', '99ff8040');
+            
+            // --- KML Styles (Updated to match your colors) ---
+            this._addKmlStyles(documentNode, 'reviewed', '99008000'); // Green (AABBGGR format)
+            this._addKmlStyles(documentNode, 'status-1', '99E6D8AD'); // Lightest Blue
+            this._addKmlStyles(documentNode, 'status-2', '99EBCE87'); // Sky Blue
+            this._addKmlStyles(documentNode, 'status-3', '99B48246'); // Steel Blue
+            this._addKmlStyles(documentNode, 'status-4', '998B0000'); // Dark Blue
+            this._addKmlStyles(documentNode, 'status-0', '99B0B0B0'); // Grey
             this._addKmlStyles(documentNode, 'cluster', '66ff9900');
 
             _(this.rectangleInfos).each(function (rectangleInfo) {
@@ -542,13 +551,17 @@ const BirdCount = (function () {
         },
 
         _parseRows: function (entries) {
+            if (!entries || entries.length === 0) {
+                console.warn("No data found in sheet tab.");
+                return []; // Return an empty array if entries are null or empty
+            }
             const [header, ...rows] = entries;
             return rows;
         },
 
         convexHull: function (points) {
             points.sort(function (a, b) {
-                return a.lat() != b.lat() ? a.lat() - b.lat() : a.lng() - b.lng();
+                return a.lat() != b.lat() ? a.lat() - b.lalat() : a.lng() - b.lng();
             });
 
             const n = points.length;
@@ -581,7 +594,7 @@ const BirdCount = (function () {
                 mapContainerId: options.mapContainerId,
                 mapSpreadSheetId: options.mapSpreadSheetId,
                 name: options.name,
-                boundaryLink: options.boundaryLink,
+                boundaryLink: options.boundaryLink, // *** Pass boundaryLink to BirdMap ***
                 alert: function (message) {
                     $('.page-alert-box .modal-body').html('<p>' + message + '</p>')
                     $('.page-alert-box').modal('show');
