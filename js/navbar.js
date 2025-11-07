@@ -3,7 +3,7 @@
 (function() {
     // 1. Set the master sheet ID and expand range to column D
     const MASTER_SHEET_ID = '1fUqe-a3brySWDt47s4gdeYjA2aBFuzAjFv9A68QFUZA';
-    const RANGE = 'Sheet1!A2:E'; // Assumes: Name, last_sheet, link, default
+    const RANGE = 'Sheet1!A2:E'; // Assumes: Name, last_sheet, link, default, boundaryLink
 
     /**
      * Extracts the Google Sheet ID from a full URL or returns the input if it's already an ID.
@@ -44,7 +44,7 @@
                     const last_sheet = row[1];
                     const link = row[2];
                     const is_default = row[3];
-                    const boundaryLink = row[4]; // *** NEW ***
+                    const boundaryLink = row[4]; 
                     
                     if (name && last_sheet && link) {
                         rootData.push({

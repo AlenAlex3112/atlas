@@ -62,7 +62,8 @@ const BirdCount = (function () {
                 zoom: 12,
                 mapContainerId: 'map-canvas',
                 mapSpreadSheetId: null,
-                name: 'visualization'
+                name: 'visualization',
+                boundaryLink: null
             }, options);
 
             if (!this.options.mapSpreadSheetId) {
@@ -185,6 +186,22 @@ const BirdCount = (function () {
 
         processCoordinates: function (rows) {
             this.map = this._createMap(rows);
+            if (this.options.boundaryLink) {
+                // Use a proxy to get around CORS issues
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(this.options.boundaryLink);
+
+                this.map.data.loadGeoJson(proxyUrl, null, function(features) {
+                    console.log("Boundary loaded successfully.");
+                });
+                
+                // Set the style for your boundary
+                this.map.data.setStyle({
+                    strokeColor: 'red',
+                    strokeWeight: 3,
+                    strokeOpacity: 0.8,
+                    fillOpacity: 0 // Makes it a line, not a filled shape
+                });
+            }
             this.rectangleInfos = this._createRectangleInfo(rows);
             google.maps.event.addListenerOnce(this.map, 'idle', _.bind(function () {
                 $('#' + this.options.mapContainerId).removeClass("spinner");
@@ -564,6 +581,7 @@ const BirdCount = (function () {
                 mapContainerId: options.mapContainerId,
                 mapSpreadSheetId: options.mapSpreadSheetId,
                 name: options.name,
+                boundaryLink: options.boundaryLink,
                 alert: function (message) {
                     $('.page-alert-box .modal-body').html('<p>' + message + '</p>')
                     $('.page-alert-box').modal('show');
