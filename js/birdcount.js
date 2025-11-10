@@ -1,7 +1,5 @@
-// --- UPDATED birdcount.js (Using KmlLayer) ---
-
 const BirdCount = (function () {
-    const $ = jQuery, //wp noConflicts $. Capture $ in this scope
+    const $ = jQuery, 
         CELL_PATTERN = /([A-Z]+)(\d+)/,
         REVIEWED_PATTERN = ['yes', 'y', 'reviewed'],
         infoBoxTemplate = _.template('<span><b><%=clusterName%></b></span>' +
@@ -29,11 +27,11 @@ const BirdCount = (function () {
                 <li><label><input type="checkbox" class="clusterChkBox"/> Show Clusters</label></li> \
                 \
                 <li>Legend:</li> \
-                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #B0B0B0; margin-right: 10px;"></span>No Lists</li> \
-                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #ADD8E6; margin-right: 10px;"></span>1 List</li> \
-                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #87CEEB; margin-right: 10px;"></span>2 Lists</li> \
-                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #4682B4; margin-right: 10px;"></span>3 Lists</li> \
-                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #00008B; margin-right: 10px;"></span>4 Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #999999; margin-right: 10px;"></span>No Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #C57CF2; margin-right: 10px;"></span>1 List</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #A646E2; margin-right: 10px;"></span>2 Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #7E2AB2; margin-right: 10px;"></span>3 Lists</li> \
+                <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #2B0047; margin-right: 10px;"></span>4 Lists</li> \
                 <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #008000; margin-right: 10px;"></span>Reviewed</li> \
                 \
             </ul> \
@@ -107,17 +105,15 @@ const BirdCount = (function () {
 
             switch (this.getValue('status')) {
                 case '1':
-                    return '#ADD8E6'; // Lightest Blue
+                    return '#C57CF2'; // Lightest violet
                 case '2':
-                    return '#87CEEB'; // Sky Blue
+                    return '#A646E2'; // Purple
                 case '3':
-Signature: `BirdCount.BirdMap.prototype.getFillColor = function () { ... }`
-Source: `birdcount.js:106`
-return '#4682B4'; // Steel Blue
+                    return '#7E2AB2'; // Violet
                 case '4':
-                    return '#00008B'; // Dark Blue
+                    return '#2B0047'; // Dark Violet
                 default:
-                    return '#B0B0B0'; // Grey (for 'No Lists')
+                    return '#999999'; // Grey (for 'No Lists')
             }
         },
 
@@ -187,10 +183,8 @@ return '#4682B4'; // Steel Blue
         processCoordinates: function (rows) {
             this.map = this._createMap(rows);
             
-            // --- *** UPDATED: Load boundary using KmlLayer *** ---
             if (this.options.boundaryLink) {
                 
-                // We no longer need the proxy. KmlLayer can handle the URL.
                 const kmlUrl = this.options.boundaryLink; 
 
                 const kmlLayer = new google.maps.KmlLayer({
@@ -208,8 +202,7 @@ return '#4682B4'; // Steel Blue
                     }
                 });
             }
-            // --- *** END OF NEW CODE *** ---
-
+            
             this.rectangleInfos = this._createRectangleInfo(rows);
             google.maps.event.addListenerOnce(this.map, 'idle', _.bind(function () {
                 $('#' + this.options.mapContainerId).removeClass("spinner");
@@ -492,13 +485,13 @@ return '#4682B4'; // Steel Blue
             this._addTextNode(documentNode, 'name', this.options.name, NS_KML);
             
             // --- KML Styles (Updated to match your colors) ---
-            this._addKmlStyles(documentNode, 'reviewed', '99008000'); // Green (AABBGGR format)
-            this._addKmlStyles(documentNode, 'status-1', '99E6D8AD'); // Lightest Blue
-            this._addKmlStyles(documentNode, 'status-2', '99EBCE87'); // Sky Blue
-            this._addKmlStyles(documentNode, 'status-3', '99B48246'); // Steel Blue
-            this._addKmlStyles(documentNode, 'status-4', '998B0000'); // Dark Blue
-            this._addKmlStyles(documentNode, 'status-0', '99B0B0B0'); // Grey
-            this._addKmlStyles(documentNode, 'cluster', '66ff9900');
+            this._addKmlStyles(documentNode, 'reviewed', '99008000'); // Green
+            this._addKmlStyles(documentNode, 'status-1', '99F27CC5'); // Lightest violet
+            this._addKmlStyles(documentNode, 'status-2', '99E246A6'); // Purple
+            this._addKmlStyles(documentNode, 'status-3', '99B22A7E'); // Violet
+            this._addKmlStyles(documentNode, 'status-4', '9947002B'); // Dark Violet
+            this._addKmlStyles(documentNode, 'status-0', '99999999'); // Grey
+            this._addKmlStyles(documentNode, 'cluster', '66ff9900'); // Orange 
 
             _(this.rectangleInfos).each(function (rectangleInfo) {
                 const options = {
@@ -594,7 +587,7 @@ return '#4682B4'; // Steel Blue
                 mapContainerId: options.mapContainerId,
                 mapSpreadSheetId: options.mapSpreadSheetId,
                 name: options.name,
-                boundaryLink: options.boundaryLink, // *** Pass boundaryLink to BirdMap ***
+                boundaryLink: options.boundaryLink, 
                 alert: function (message) {
                     $('.page-alert-box .modal-body').html('<p>' + message + '</p>')
                     $('.page-alert-box').modal('show');

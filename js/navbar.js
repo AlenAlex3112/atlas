@@ -1,14 +1,10 @@
-// --- UPDATED js/navbar.js (12-level & Default) ---
-
 (function() {
-    // 1. Set the master sheet ID and expand range to column D
+    // Change the master sheet ID and range as needed
     const MASTER_SHEET_ID = '1fUqe-a3brySWDt47s4gdeYjA2aBFuzAjFv9A68QFUZA';
-    const RANGE = 'Sheet1!A2:E'; // Assumes: Name, last_sheet, link, default, boundaryLink
+    const RANGE = 'Sheet1!A2:E'; // Assumes: name, last_sheet, link, default, boundary
 
-    /**
-     * Extracts the Google Sheet ID from a full URL or returns the input if it's already an ID.
-     */
-    function getSheetId(input) {
+    // Extracts the Google Sheet ID from a full URL or returns the input if it's already an ID.
+      function getSheetId(input) {
         if (!input) return null;
         const match = input.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
         if (match && match[1]) {
@@ -20,9 +16,7 @@
         return null;
     }
 
-    /**
-     * This function now fetches the *root* list of items, including default.
-     */
+    // This function now fetches the *root* list of items, including default.
     async function fetchAndBuildRootData() {
         try {
             await gapi.client.init({
@@ -36,7 +30,7 @@
             });
 
             const rows = response.result.values;
-            const rootData = []; // This is now just an array
+            const rootData = []; 
 
             if (rows && rows.length > 0) {
                 rows.forEach(row => {

@@ -1,5 +1,3 @@
-// --- NEW RECURSIVE js/app-starter.js ---
-
 /**
  * This function is called by navbar.js *after* the ROOT data is fetched.
  * @param {Array} rootData - The array of items from the master sheet.

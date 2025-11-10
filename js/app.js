@@ -1,4 +1,3 @@
-// --- UPDATED app.js (Back Button overrides Default) ---
 
 /**
  * This function is called by app-starter.js.
@@ -6,7 +5,7 @@
  */
 function initializeRouter(rootData) {
 
-    // *** NEW: A flag to communicate between the back button and the router ***
+    // *** A flag to communicate between the back button and the router ***
     let isNavigatingBack = false;
 
     const app = $.sammy('#main', function () {
@@ -39,7 +38,7 @@ function initializeRouter(rootData) {
                 // Fetch all 5 columns
                 const response = await gapi.client.sheets.spreadsheets.values.get({
                     spreadsheetId: sheetId,
-                    range: 'Sheet1!A2:E', // Name, last_sheet, link, default, boundary
+                    range: 'Sheet1!A2:E', // name, last_sheet, link, default, boundary
                 });
 
                 const rows = response.result.values;
@@ -119,7 +118,7 @@ function initializeRouter(rootData) {
         // --- THIS IS THE CORE RECURSIVE LOGIC ---
         async function handleRoute() {
             
-            // *** NEW: Check if this route was triggered by the back button ***
+            // Check if this route was triggered by the back button
             const isHandlingBackNavigation = isNavigatingBack;
             // Immediately reset the global flag for future navigations
             isNavigatingBack = false;
@@ -138,7 +137,7 @@ function initializeRouter(rootData) {
             if (this.params.p9) { parts.push(this.params.p9); path += '/' + this.params.p9; }
             if (this.params.p10) { parts.push(this.params.p10); path += '/' + this.params.p10; }
             if (this.params.p11) { parts.push(this.params.p11); path += '/' + this.params.p11; }
-            if (this.params.p12) { parts.push(this.params.p12); path += '/' + this.params.p12; }
+            if (this.params.p12) { parts.push(this.params.p12); path += '/' + this.params.p12; } // Up to 12 levels in the url are allowed at the moment 
             
             if (path.length > 0) {
                 $backButton.show();
@@ -163,7 +162,7 @@ function initializeRouter(rootData) {
 
                 if (selectedItem.last_sheet === '1') {
                     const mapContainerId = 'map-' + path.replace(/[^a-z0-9]/g, '-');
-                    loadMap(selectedItem, mapContainerId); // Pass full item
+                    loadMap(selectedItem, mapContainerId); 
                     populatePills(currentItems, currentPathPrefix, part); 
                     return; 
                 }
@@ -177,7 +176,6 @@ function initializeRouter(rootData) {
             if (currentItems && currentItems.length > 0) {
                 const defaultItem = currentItems.find(item => item.default === '1');
                 
-                // *** NEW: Check the flag before redirecting ***
                 // Only redirect if a default exists AND we didn't get here via the back button
                 if (defaultItem && !isHandlingBackNavigation) {
                     const defaultItemKey = defaultItem.name.trim().toLowerCase();
@@ -190,7 +188,7 @@ function initializeRouter(rootData) {
             populatePills(currentItems, currentPathPrefix, null);
         }
 
-        // --- THE SAMMY.JS ROUTES (Correct Order, 12-levels) ---
+        // --- THE SAMMY.JS ROUTES (Correct Order, 12-levels (change here also if more levels are required)) ---
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10/:p11/:p12', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10/:p11', handleRoute);
         this.get('#/:p1/:p2/:p3/:p4/:p5/:p6/:p7/:p8/:p9/:p10', handleRoute);
@@ -214,7 +212,6 @@ function initializeRouter(rootData) {
     $(document).on('click', '#back-button', function(e) {
         e.preventDefault(); 
         
-        // *** NEW: Set the flag before changing the hash ***
         isNavigatingBack = true;
         
         const currentHash = location.hash; 
