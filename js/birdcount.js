@@ -25,7 +25,6 @@ const BirdCount = (function () {
                 </li> \
                 <%if (locationAvailable){%><li><label><input type="checkbox" class="locationChkBox"/> Show Location</label></li><%}%> \
                 <li><label><input type="checkbox" class="clusterChkBox"/> Show Clusters</label></li> \
-                \
                 <li>Legend:</li> \
                 <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #999999; margin-right: 10px;"></span>No Lists</li> \
                 <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #C57CF2; margin-right: 10px;"></span>1 List</li> \
@@ -33,7 +32,6 @@ const BirdCount = (function () {
                 <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #7E2AB2; margin-right: 10px;"></span>3 Lists</li> \
                 <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #2B0047; margin-right: 10px;"></span>4 Lists</li> \
                 <li style="display: flex; align-items: center;"><span style="display: inline-block; width: 20px; height: 20px; background-color: #008000; margin-right: 10px;"></span>Reviewed</li> \
-                \
             </ul> \
         </div>'),
 
@@ -102,18 +100,12 @@ const BirdCount = (function () {
             if (this.isReviewed()) {
                 return '#008000'; // Green
             }
-
             switch (this.getValue('status')) {
-                case '1':
-                    return '#C57CF2'; // Lightest violet
-                case '2':
-                    return '#A646E2'; // Purple
-                case '3':
-                    return '#7E2AB2'; // Violet
-                case '4':
-                    return '#2B0047'; // Dark Violet
-                default:
-                    return '#999999'; // Grey (for 'No Lists')
+                case '1': return '#C57CF2'; // Lightest violet
+                case '2': return '#A646E2'; // Purple
+                case '3': return '#7E2AB2'; // Violet
+                case '4': return '#2B0047'; // Dark Violet
+                default: return '#999999'; // Grey
             }
         },
 
@@ -209,11 +201,12 @@ const BirdCount = (function () {
             }, this));
         },
 
-        createClusterBoundaries: function () {
+       createClusterBoundaries: function () {
             return _.chain(this.rectangleInfos)
                 .filter(function (rectangleInfo) {
-                    //exclude forest cells
-                    return rectangleInfo.getValue('clusterName') != 'F';
+                    // FIX: Check that clusterName exists, is not empty, and is not 'F'
+                    const cName = rectangleInfo.getValue('clusterName');
+                    return cName && cName.trim() !== '' && cName !== 'F';
                 })
                 .groupBy(function (rectangleInfo) {
                     return rectangleInfo.getValue('clusterName');

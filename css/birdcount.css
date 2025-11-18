@@ -35,3 +35,36 @@ html, body, .map-parent, .map-parent>div, .map-container  {
     font-size: small;
     font-weight: normal;
 }
+
+
+    /* Custom styles for the logo placement */
+    .navbar-header {
+        display: flex; /* Use flexbox for layout */
+        flex-direction: column; /* Stack children vertically */
+        align-items: flex-start; /* Align children to the left */
+        justify-content: center; /* Center vertically if needed */
+        padding-top: 10px; /* Add some padding at the top */
+        padding-bottom: 5px; /* Add some padding at the bottom */
+    }
+
+    .navbar-header .navbar-brand {
+        line-height: normal; /* Reset line-height if needed */
+        height: auto; /* Allow height to adjust */
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-right: 0; /* Remove extra margin if any */
+        margin-left: 15px; /* Match original left margin */
+    }
+
+    .brand-logo-container {
+        margin-left: 20px; /* Align with the title text */
+        margin-top: 5px; /* Space between title and logo */
+        max-width: 125px; /* Max width to constrain the logo */
+        /* You might need to adjust this max-width to match your "Bird Atlas Dashboard" text width */
+    }
+
+    .brand-logo {
+        width: 100%; /* Make the image take 100% of its container's width */
+        height: auto; /* Maintain aspect ratio */
+        display: block; /* Remove extra space below image */
+    }
