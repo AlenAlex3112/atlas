@@ -187,6 +187,7 @@ const BirdCount = (function () {
         processCoordinates: function (rows) {
             this.map = this._createMap(rows);
             this.geoLocation = new GeoLocationMarker.GeoLocationMarker();
+            
             if (this.options.boundaryLink) {
                 const kmlUrl = this.options.boundaryLink; 
                 const kmlLayer = new google.maps.KmlLayer({
@@ -405,9 +406,14 @@ const BirdCount = (function () {
         },
 
         _createCustomControls: function () {
+            // FIX: Always show the button if the geoLocation object was created.
+            // We stop waiting for the browser to confirm hardware availability to avoid race conditions.
+            const canLocate = !!this.geoLocation; 
+
             this.customMapControls = $(customMapControlTemplate({
-                locationAvailable: this.geoLocation.isLocationAvailable()
+                locationAvailable: canLocate
             }));
+            
             this.customMapControls.find(".exportKmlBtn").bind("click", _.bind(this._exportKml, this));
             this.customMapControls.find(".districtCenter").bind("click", _.bind(this._recenterToDistrict, this));
             this.customMapControls.find(".clusterChkBox").bind("click", _.bind(this.clusterCheckboxClicked, this));
