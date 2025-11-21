@@ -141,8 +141,10 @@ function initializeRouter(rootData) {
             
             if (path.length > 0) {
                 $backButton.show();
+                InfoManager.hideLandingMessage(); 
             } else {
                 $backButton.hide();
+                InfoManager.showLandingMessage();
             }
             
             let currentItems = rootData; 

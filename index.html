@@ -19,6 +19,7 @@
     <script type="text/javascript" src="js/location-marker.js" defer></script>
     <script type="text/javascript" src="js/api-key.js" defer></script>
     <script type="text/javascript" src="js/birdcount.js" defer></script>
+    <script type="text/javascript" src="js/info.js" defer></script>
     <script type="text/javascript" src="js/app.js" defer></script>
     <script type="text/javascript" src="js/app-starter.js" defer></script>
     <script type="text/javascript" src="js/navbar.js" defer></script>
@@ -55,9 +56,37 @@
     </div>
 </nav>
 
-<div class="map-parent container-fluid">
+<div class="map-parent container-fluid" style="position: relative;">
+    
+  <div id="landing-message">
+        <h1>Bird Atlas Dashboard</h1>
+        
+        <p>
+            A simple tool for map visualization of Bird Atlases. The map will show the current status of bird count coverage across the chosen geographical area, 
+            provided that its feeder Google Sheets are properly filled in.
+        </p>
+        <p>
+            The data is read from a set of Google Sheets maintained by the Birders.
+        </p>
+        
+        <br>
+        <br>
+
+        <p>
+            This tool was Originally developed by Vijay Konnackal and now maintained by Bird Count India
+        </p>
+        <p>
+            For more information or reporting bugs write to 
+            <a href="mailto:skimmer@birdcount.in">skimmer@birdcount.in</a>
+        </p>
+        <br>
+        <br>
+        <img src="images/birdcountindia.png" alt="Bird Count India" class="landing-logo">
+    </div>
+
     <div class="tab-content" id="map-tab-content">
-        </div>
+    </div>
+</div>
 </div>
 
 <div class="modal fade page-alert-box" tabindex="-1" role="dialog">

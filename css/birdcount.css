@@ -68,3 +68,54 @@ html, body, .map-parent, .map-parent>div, .map-container  {
         height: auto; /* Maintain aspect ratio */
         display: block; /* Remove extra space below image */
     }
+    
+#landing-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Restrict width so text doesn't span the whole screen */
+    z-index: 0;
+    text-align: center;
+}
+
+/* Main Heading Style */
+#landing-message h1 {
+    font-weight: bold;
+    font-size: 3em; 
+    color: rgba(0, 0, 0, 0.4); /* Light Grey */
+    margin-bottom: 20px;
+}
+
+/* Paragraph Text Style */
+#landing-message p {
+    font-size: 1.5em;
+    color: rgba(0, 0, 0, 0.3); /* Slightly lighter grey */
+    margin-bottom: 10px;
+    line-height: 1.5; /* Makes multi-line text easier to read */
+}
+
+/* Link Style */
+#landing-message .landing-link {
+    margin-top: 25px;
+}
+
+#landing-message a {
+    font-size: 1.2em;
+    color: #295BA7; /* Blue color for the link */
+    text-decoration: none;
+    border-bottom: 1px dotted #295BA7; /* Subtle underline */
+}
+
+#landing-message a:hover {
+    color: #00008B; /* Darker blue on hover */
+    text-decoration: none;
+    border-bottom: 1px solid #00008B;
+}
+
+#landing-message .landing-logo {
+    max-width: 200px; /* Limits width so it doesn't dominate */
+    height: auto;     /* Maintains aspect ratio */
+    opacity: 0.8;     /* Slight transparency to match the text vibe */
+    margin-top: 10px; /* Fine-tune spacing if needed */
+}
