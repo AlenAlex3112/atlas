@@ -1,5 +1,9 @@
+/**
+ * Author vj
+ * Licensed under MIT license.
+ */
 const BirdCount = (function () {
-    const $ = jQuery, 
+    const $ = jQuery, //wp noConflicts $. Capture $ in this scope
         CELL_PATTERN = /([A-Z]+)(\d+)/,
         REVIEWED_PATTERN = ['yes', 'y', 'reviewed'],
         infoBoxTemplate = _.template('<span><b><%=clusterName%></b></span>' +
@@ -15,6 +19,7 @@ const BirdCount = (function () {
             '<%if (!_.isEmpty(listUrl["3"])){%><br/><a target="_blank" href="<%=listUrl["3"]%>">List3</a><%}%>' +
             '<%if (!_.isEmpty(listUrl["4"])){%><br/><a target="_blank" href="<%=listUrl["4"]%>">List4</a><%}%>'),
         
+        // --- FIXED TEMPLATE (No syntax errors, Flexbox alignment) ---
         customMapControlTemplate = _.template('<div class="settings-dropdown dropdown"> \
             <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> \
                 <span class="glyphicon glyphicon-menu-hamburger"></span></button> \
@@ -96,16 +101,23 @@ const BirdCount = (function () {
             }
         },
         
+        // --- FIXED COLOR FUNCTION (Syntax errors removed) ---
         getFillColor: function () {
             if (this.isReviewed()) {
                 return '#008000'; // Green
             }
+
             switch (this.getValue('status')) {
-                case '1': return '#C57CF2'; // Lightest violet
-                case '2': return '#A646E2'; // Purple
-                case '3': return '#7E2AB2'; // Violet
-                case '4': return '#2B0047'; // Dark Violet
-                default: return '#999999'; // Grey
+                case '1':
+                    return '#C57CF2'; // Lightest violet
+                case '2':
+                    return '#A646E2'; // Purple
+                case '3':
+                    return '#7E2AB2'; // Violet
+                case '4':
+                    return '#2B0047'; // Dark Violet
+                default:
+                    return '#999999'; // Grey (for 'No Lists')
             }
         },
 
@@ -124,7 +136,7 @@ const BirdCount = (function () {
         labels: [],
         infoBox: new google.maps.InfoWindow(),
         customMapControls: null,
-        geoLocation: new GeoLocationMarker.GeoLocationMarker(),
+        geoLocation: null,
 
         render: function () {
             const spreadSheetUrl = "https://sheets.googleapis.com/v4/spreadsheets/" + this.options.mapSpreadSheetId + "/values:batchGet";
@@ -174,16 +186,14 @@ const BirdCount = (function () {
 
         processCoordinates: function (rows) {
             this.map = this._createMap(rows);
-            
+            this.geoLocation = new GeoLocationMarker.GeoLocationMarker();
             if (this.options.boundaryLink) {
-                
                 const kmlUrl = this.options.boundaryLink; 
-
                 const kmlLayer = new google.maps.KmlLayer({
                     url: kmlUrl,
                     map: this.map,
-                    preserveViewport: true, // Don't let the KML zoom the map
-                    suppressInfoWindows: true // Don't show KML popups
+                    preserveViewport: true,
+                    suppressInfoWindows: true
                 });
 
                 kmlLayer.addListener('status_changed', () => {
@@ -201,10 +211,10 @@ const BirdCount = (function () {
             }, this));
         },
 
-       createClusterBoundaries: function () {
+        createClusterBoundaries: function () {
             return _.chain(this.rectangleInfos)
                 .filter(function (rectangleInfo) {
-                    // FIX: Check that clusterName exists, is not empty, and is not 'F'
+                    // --- FIX: Ignore cells with no cluster name ---
                     const cName = rectangleInfo.getValue('clusterName');
                     return cName && cName.trim() !== '' && cName !== 'F';
                 })
@@ -477,14 +487,14 @@ const BirdCount = (function () {
 
             this._addTextNode(documentNode, 'name', this.options.name, NS_KML);
             
-            // --- KML Styles (Updated to match your colors) ---
-            this._addKmlStyles(documentNode, 'reviewed', '99008000'); // Green
-            this._addKmlStyles(documentNode, 'status-1', '99F27CC5'); // Lightest violet
-            this._addKmlStyles(documentNode, 'status-2', '99E246A6'); // Purple
-            this._addKmlStyles(documentNode, 'status-3', '99B22A7E'); // Violet
-            this._addKmlStyles(documentNode, 'status-4', '9947002B'); // Dark Violet
-            this._addKmlStyles(documentNode, 'status-0', '99999999'); // Grey
-            this._addKmlStyles(documentNode, 'cluster', '66ff9900'); // Orange 
+            // --- KML Styles (Matches your Violet scheme) ---
+            this._addKmlStyles(documentNode, 'reviewed', '99008000'); 
+            this._addKmlStyles(documentNode, 'status-1', '99F27CC5'); 
+            this._addKmlStyles(documentNode, 'status-2', '99E246A6'); 
+            this._addKmlStyles(documentNode, 'status-3', '99B22A7E'); 
+            this._addKmlStyles(documentNode, 'status-4', '9947002B'); 
+            this._addKmlStyles(documentNode, 'status-0', '99999999'); 
+            this._addKmlStyles(documentNode, 'cluster', '66ff9900'); 
 
             _(this.rectangleInfos).each(function (rectangleInfo) {
                 const options = {
@@ -539,7 +549,7 @@ const BirdCount = (function () {
         _parseRows: function (entries) {
             if (!entries || entries.length === 0) {
                 console.warn("No data found in sheet tab.");
-                return []; // Return an empty array if entries are null or empty
+                return []; 
             }
             const [header, ...rows] = entries;
             return rows;
@@ -547,7 +557,7 @@ const BirdCount = (function () {
 
         convexHull: function (points) {
             points.sort(function (a, b) {
-                return a.lat() != b.lat() ? a.lat() - b.lalat() : a.lng() - b.lng();
+                return a.lat() != b.lat() ? a.lat() - b.lat() : a.lng() - b.lng();
             });
 
             const n = points.length;
